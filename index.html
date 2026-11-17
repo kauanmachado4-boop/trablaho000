@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Back-end — Slide Rosa</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff0f5;--pan:#fffafc;--pan2:#ffe3ee;--ink:#5a2a47;--mute:#8f6580;--mint:#e0678f;--coral:#f7b4cb;--sun:#f4b6a0;--vio:#f6b9cf}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:radial-gradient(circle at 15% 10%,#ffd3e3,transparent 45%),radial-gradient(circle at 90% 90%,#ffe0ec,transparent 50%),var(--bg);font-family:'Quicksand',system-ui,sans-serif;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;overflow:hidden}
+.win{width:min(96vw,calc((100vh - 92px)*16/9));aspect-ratio:16/9;container-type:inline-size;background:var(--pan);border-radius:2cqw;overflow:hidden;display:grid;grid-template-rows:auto 1fr auto;box-shadow:0 2cqw 5cqw rgba(214,100,150,.28),0 0 0 .2cqw #f7b4cb;position:relative}
+.top{display:flex;align-items:flex-end;gap:1.2cqw;background:#ffe3ee;padding:.9cqw 1.4cqw 0}
+.lights{display:flex;gap:.6cqw;padding-bottom:1cqw}.lights i{width:1.1cqw;height:1.1cqw;border-radius:50%}
+.tabs{display:flex;overflow:hidden}
+.tab{font:500 1.05cqw 'JetBrains Mono',monospace;color:var(--mute);padding:.9cqw 1.5cqw;border-radius:.8cqw .8cqw 0 0;cursor:pointer;white-space:nowrap;border:0;background:none}
+.tab.a{background:var(--pan);color:var(--mint);box-shadow:inset 0 .25cqw 0 var(--mint)}
+.tab:focus-visible{outline:2px solid var(--mint)}
+.stage{position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:none;grid-template-columns:1.2fr 1fr;gap:3.5cqw;align-items:center;padding:2.5cqw 5cqw 2cqw}
+.slide.on{display:grid}
+h1,h2{font-weight:700;line-height:1.02;min-height:1.05em}
+h1{font-size:8cqw;color:var(--ink)}
+h2{font-size:4.8cqw;margin-bottom:2cqw}
+h1::after,h2::after{content:"";display:inline-block;width:.45em;height:.8em;margin-left:.1em;background:var(--mint);vertical-align:-.08em;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.pre{color:var(--coral);font-family:'JetBrains Mono',monospace;font-size:.6em;margin-right:.35em}
+p,.ln{font-size:1.95cqw;line-height:1.5;color:var(--mute)}
+b{color:var(--ink)}
+.ln{position:relative;padding-left:2.6cqw;margin-bottom:.9cqw}
+.ln::before{content:"›";position:absolute;left:.4cqw;color:var(--mint);font-weight:700}
+.hid{opacity:0;transform:translateX(-2.5cqw)}
+.enter .hid{animation:in .6s calc(var(--i)*.16s + .9s) both cubic-bezier(.2,.9,.3,1)}
+@keyframes in{to{opacity:1;transform:none}}
+.ex{margin-top:1.8cqw;border:.2cqw dashed var(--sun);border-radius:1cqw;padding:1cqw 1.6cqw;font-size:1.75cqw;line-height:1.45;color:var(--ink)}
+.ex em{font-style:normal;color:var(--mint);font-weight:700}
+.shot{align-self:center;background:var(--pan2);border-radius:1.4cqw;overflow:hidden;box-shadow:1.1cqw 1.1cqw 0 var(--coral);height:min(100%,31cqw);display:grid;grid-template-rows:auto 1fr;clip-path:inset(0 0 100% 0)}
+.enter .shot{animation:boot 1s .3s both cubic-bezier(.7,0,.2,1)}
+@keyframes boot{to{clip-path:inset(0 0 0 0)}}
+.url{font:500 1cqw 'JetBrains Mono',monospace;color:var(--mute);padding:.8cqw 1.2cqw;background:#e0678f14;display:flex;gap:.8cqw;align-items:center}
+.url::before{content:"";width:.9cqw;height:.9cqw;border-radius:50%;background:var(--mint)}
+.pic{position:relative;min-height:0;display:flex;align-items:center;justify-content:center;color:var(--mute);font:500 1.4cqw 'JetBrains Mono',monospace}
+.pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pic::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 0 48%,#e0678f33 50%,transparent 52%) 0 0/100% 12%;opacity:0;pointer-events:none}
+.enter .pic::after{animation:scan 1.4s .4s}
+@keyframes scan{0%{opacity:1;transform:translateY(-100%)}100%{opacity:0;transform:translateY(100%)}}
+.flow{display:flex;align-items:center;margin-bottom:2cqw}
+.nd{background:var(--pan2);border:.2cqw solid #f7b4cb;border-radius:1cqw;padding:.7cqw .9cqw;font-size:1.45cqw;text-align:center;line-height:1.2;animation:lit 6s infinite;animation-delay:calc(var(--k)*1.1s + 1.2s);opacity:.55}
+.lk{flex:1;height:.25cqw;min-width:1cqw;background:repeating-linear-gradient(90deg,var(--mint) 0 .6cqw,transparent .6cqw 1.2cqw);opacity:.6}
+@keyframes lit{0%,22%{opacity:1;border-color:var(--mint);background:#e0678f26;transform:translateY(-.5cqw)}30%,100%{opacity:.55}}
+.chips{display:flex;flex-wrap:wrap;gap:.9cqw;margin-bottom:1.6cqw}
+.chips span{background:var(--mint);color:var(--ink);font:700 1.55cqw 'JetBrains Mono',monospace;padding:.5cqw 1.3cqw;border-radius:5cqw;opacity:0}
+.enter .chips span{animation:bounce .7s calc(var(--i)*.14s + .9s) both cubic-bezier(.3,1.7,.5,1)}
+.chips span:nth-child(2n){background:#ffd3e1}.chips span:nth-child(3n){background:var(--sun)}
+@keyframes bounce{from{opacity:0;transform:translateY(3cqw) scale(.5)}to{opacity:1;transform:none}}
+.term{background:#fff;border-radius:1.4cqw;padding:1.4cqw 1.8cqw;font:500 1.9cqw/1.55 'JetBrains Mono',monospace;color:var(--ink);margin:1.4cqw 0;border:.2cqw solid #f7b4cb;min-height:12.5cqw;white-space:pre-wrap}
+.k{color:#d6457a}.s{color:#d9822b}.o{color:#c2366b;font-weight:700}.d{color:var(--mute)}
+.who{margin-top:2.4cqw;font:700 1.7cqw 'JetBrains Mono',monospace;color:var(--mint)}
+.bot{display:flex;justify-content:space-between;align-items:center;background:var(--vio);color:var(--ink);font:700 1cqw 'JetBrains Mono',monospace;padding:.5cqw 1.6cqw}
+#bar{height:.3cqw;background:var(--mint);width:0;transition:width .6s;position:absolute;left:0;top:0;z-index:5}
+/* transição */
+#tr{position:absolute;inset:0;z-index:20;display:none;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(6,1fr);pointer-events:none}
+#tr i{transform:scale(0);transition:transform .35s cubic-bezier(.6,0,.3,1)}
+#tr.in i{transform:scale(1.02)}
+#toast{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:25;font:700 2.6cqw 'JetBrains Mono',monospace;background:#fff;color:var(--mint);padding:1.2cqw 2.4cqw;border-radius:5cqw;display:none;border:.25cqw solid var(--mint);white-space:nowrap}
+.ctl{display:flex;align-items:center;gap:14px;color:var(--ink)}
+.ctl button{font:700 15px 'Quicksand',sans-serif;background:var(--mint);color:#fff;border:0;border-radius:30px;padding:10px 22px;cursor:pointer;box-shadow:0 4px 0 #b8456b}
+.ctl button:active{transform:translateY(3px);box-shadow:0 1px 0 #b8456b}
+.ctl button:focus-visible{outline:3px solid #fff}
+#n{font:700 14px 'JetBrains Mono',monospace;min-width:54px;text-align:center}
+@media(prefers-reduced-motion:reduce){.hid,.chips span{opacity:1;transform:none;animation:none!important}.shot{clip-path:none;animation:none!important}h1::after,h2::after,.nd{animation:none}}
+</style>
+</head>
+<body>
+<main class="win" id="win">
+<div class="top"><div class="lights"><i style="background:#f7a8c4"></i><i style="background:#ffd3e1"></i><i style="background:#f2c4d6"></i></div><div class="tabs" id="tabs"></div></div>
+<div class="stage" id="stage"><div id="bar"></div>
+
+<section class="slide on">
+ <div>
+  <h1 data-t="Back-end"></h1>
+  <p class="hid" style="--i:0;margin-top:1.6cqw;max-width:40cqw">O cérebro por trás da tela: a parte invisível de sites e aplicativos.</p>
+  <div class="who hid" style="--i:1">// apresentado por Dafnny, Ana Julia e Karlla </div>
+ </div>
+ <div class="shot"><div class="url">localhost:3000/inicio</div><div class="pic" data-foto="foto1">foto1</div></div>
+</section>
+
+<section class="slide">
+ <div>
+  <h2 data-t="Introdução"></h2>
+  <div class="ln hid" style="--i:0">Roda nos <b>servidores</b>, longe dos olhos do usuário.</div>
+  <div class="ln hid" style="--i:1">Recebe pedidos, processa regras e <b>guarda informações</b>.</div>
+  <div class="ln hid" style="--i:2">Front-end é o que se vê. Back-end é o que trabalha nos bastidores.</div>
+  <div class="ex hid" style="--i:3"><em>Exemplo:</em> no login de uma rede social, ele confere usuário e senha e busca os dados da conta.</div>
+ </div>
+ <div class="shot"><div class="url">localhost:3000/introducao</div><div class="pic" data-foto="foto2">foto2</div></div>
+</section>
+
+<section class="slide">
+ <div>
+  <h2 data-t="Funcionamento"></h2>
+  <div class="flow"><div class="nd" style="--k:0">👤<br>Usuário</div><div class="lk"></div><div class="nd" style="--k:1">🖥️<br>Front-end</div><div class="lk"></div><div class="nd" style="--k:2">⚙️<br>Back-end</div><div class="lk"></div><div class="nd" style="--k:3">🗄️<br>Banco</div><div class="lk"></div><div class="nd" style="--k:4">✅<br>Resposta</div></div>
+  <div class="ln hid" style="--i:0">O usuário clica, por exemplo, em <b>login</b>.</div>
+  <div class="ln hid" style="--i:1">O front-end envia a solicitação ao back-end.</div>
+  <div class="ln hid" style="--i:2">O back-end processa e consulta o banco de dados.</div>
+  <div class="ln hid" style="--i:3">O servidor devolve a resposta ao usuário.</div>
+  <div class="ex hid" style="--i:4"><em>Exemplo:</em> numa compra online, ele verifica o produto, o estoque e registra o pedido.</div>
+ </div>
+ <div class="shot"><div class="url">localhost:3000/funcionamento</div><div class="pic" data-foto="foto3">foto3</div></div>
+</section>
+
+<section class="slide">
+ <div>
+  <h2 data-t="Tecnologias"></h2>
+  <div class="chips"><span style="--i:0">Node.js</span><span style="--i:1">Python</span><span style="--i:2">PHP</span><span style="--i:3">Java</span><span style="--i:4">MySQL</span></div>
+  <div class="ln hid" style="--i:3"><b>VS Code:</b> editor de código</div>
+  <div class="ln hid" style="--i:4"><b>Git e GitHub:</b> organizar e compartilhar código</div>
+  <div class="ln hid" style="--i:5"><b>PostgreSQL:</b> banco de dados</div>
+  <div class="ln hid" style="--i:6"><b>Express:</b> servidores com Node.js</div>
+ </div>
+ <div class="shot"><div class="url">localhost:3000/tecnologias</div><div class="pic" data-foto="foto4">foto4</div></div>
+</section>
+
+<section class="slide">
+ <div>
+  <h2 data-t="Mercado de trabalho"></h2>
+  <p class="hid" style="--i:0;margin-bottom:1.2cqw">O <b>desenvolvedor back-end</b> atua em tecnologia, bancos, lojas virtuais, hospitais, redes sociais e jogos.</p>
+  <div class="ln hid" style="--i:1">Criar e manter servidores</div>
+  <div class="ln hid" style="--i:2">Desenvolver sistemas e aplicações</div>
+  <div class="ln hid" style="--i:3">Organizar bancos de dados</div>
+  <div class="ln hid" style="--i:4">Proteger informações dos usuários</div>
+  <div class="ln hid" style="--i:5">Corrigir erros e melhorar sistemas</div>
+  <div class="ex hid" style="--i:6">Vagas em empresas de todos os tamanhos, inclusive <em>remotas</em>.</div>
+ </div>
+ <div class="shot"><div class="url">localhost:3000/mercado</div><div class="pic" data-foto="foto5">foto5</div></div>
+</section>
+
+<section class="slide">
+ <div>
+  <h2 data-t="Exemplo prático"></h2>
+  <p>Programa em Python que dá boas-vindas:</p>
+  <div class="term" id="term"></div>
+  <div class="ln hid" style="--i:2">Pede o nome, recebe o que foi digitado e mostra a mensagem.</div>
+ </div>
+ <div class="shot"><div class="url">localhost:3000/exemplo</div><div class="pic" data-foto="foto6">foto6</div></div>
+</section>
+
+<section class="slide">
+ <div>
+  <h2 data-t="Curiosidades"></h2>
+  <div class="ln hid" style="--i:0">Ver um vídeo, comprar ou mandar mensagem: quase sempre há um back-end trabalhando.</div>
+  <div class="ln hid" style="--i:1"><b>Computação em nuvem:</b> dados e aplicações em servidores acessados pela internet.</div>
+  <div class="ln hid" style="--i:2"><b>Inteligência artificial:</b> ajuda a achar erros e sugerir código.</div>
+  <div class="who hid" style="--i:3">// obrigado! alguma pergunta?</div>
+ </div>
+ <div class="shot"><div class="url">localhost:3000/fim</div><div class="pic" data-foto="foto1">foto1</div></div>
+</section>
+
+<div id="tr"></div><div id="toast"></div>
+</div>
+<div class="bot"><span>● servidor online</span><span id="st"></span></div>
+</main>
+<div class="ctl"><button id="prev" aria-label="Slide anterior">◀ Anterior</button><span id="n"></span><button id="next" aria-label="Próximo slide">Próximo ▶</button></div>
+
+<script>
+/* FOTOS: foto1 ... foto6 na mesma pasta deste arquivo (,png webp, jpg ou jpeg).
+   Para trocar a foto de um slide, mude o nome aqui. Ordem dos 7 slides: */
+const FOTOS=["foto1","foto2","foto3","foto4","foto5","foto6","foto7"];
+const NOMES=["index.py","introducao.md","funcionamento.js","tecnologias.json","mercado.txt","exemplo.py","curiosidades.md"];
+const S=[...document.querySelectorAll('.slide')],reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let cur=0,busy=false,tok=0,lastMode=-1;
+function loadFoto(box,name){
+  if(!name)return;
+  const l=/\.\w{2,5}$/.test(name)?[name]:['png','webp','jpg','jpeg'].map(e=>name+'.'+e);
+  const im=new Image();let k=0;im.alt='Foto do slide';
+  im.onload=()=>{box.textContent='';box.append(im)};
+  im.onerror=()=>{k++;if(k<l.length)im.src=l[k]};
+  im.src=l[0];
+}
+document.querySelectorAll('.pic').forEach((p,i)=>loadFoto(p,FOTOS[i]));
+const tabs=document.getElementById('tabs');
+NOMES.forEach((n,i)=>{const b=document.createElement('button');b.className='tab';b.textContent=n;b.onclick=()=>go(i);tabs.append(b)});
+function mark(n){[...tabs.children].forEach((t,i)=>t.classList.toggle('a',i===n));
+  document.getElementById('bar').style.width=((n+1)/S.length*100)+'%';
+  document.getElementById('n').textContent=(n+1)+' / '+S.length;
+  document.getElementById('st').textContent='Slide '+(n+1)+' de '+S.length+'  ·  UTF-8  ·  Back-end'}
+async function type(el,txt,my,speed=55){
+  el.textContent='';
+  if(reduce){el.textContent=txt;return}
+  for(const c of txt){if(my!==tok)return;el.textContent+=c;await sleep(speed)}
+}
+async function runCode(my){
+  const t=document.getElementById('term');t.innerHTML='';
+  const line=(h)=>{const d=document.createElement('div');d.innerHTML=h;t.append(d);return d};
+  const w=reduce?0:1;
+  const a=line('<span class="k">nome</span> = <span class="k">input</span>(');const sa=document.createElement('span');a.append(sa);
+  await type(sa,'"Digite seu nome: "',my,35);if(my!==tok)return;a.append(')');
+  const b=line('<span class="k">print</span>(');const sb=document.createElement('span');b.append(sb);
+  await type(sb,'"Bem-vindo ao nosso site,", nome',my,28);if(my!==tok)return;b.append(')');
+  await sleep(700*w);if(my!==tok)return;
+  line('<span class="d">$ python app.py</span>');
+  const c=line('Digite seu nome: <span class="s" id="nm"></span>');
+  await type(c.querySelector('#nm'),'Ana',my,220);if(my!==tok)return;
+  await sleep(500*w);line('<span class="o">Bem-vindo ao nosso site, Ana</span>');
+}
+function enter(n){
+  const p=S[n];p.classList.remove('enter');void p.offsetWidth;p.classList.add('enter');
+  const h=p.querySelector('h1,h2');if(h)type(h,h.dataset.t,tok,70);
+  if(n===5)setTimeout(()=>runCode(tok),700);
+}
+/* transição: blocos coloridos + mensagem de servidor (3 estilos sorteados) */
+const tr=document.getElementById('tr'),toast=document.getElementById('toast'),cols=['#f7b4cb','#ffd3e1','#e0678f','#f4b6a0'];
+for(let i=0;i<60;i++){const c=document.createElement('i');c.style.background=cols[(i%10+Math.floor(i/10))%4];tr.append(c)}
+const MODES=[(r,c)=>Math.random()*450,(r,c)=>(r+c)*45,(r,c)=>Math.abs(c-4.5)*80+r*20];
+async function trans(n,swap){
+  let m;do m=Math.floor(Math.random()*MODES.length);while(m===lastMode);lastMode=m;
+  [...tr.children].forEach((c,i)=>c.style.transitionDelay=Math.round(MODES[m](Math.floor(i/10),i%10))+'ms');
+  tr.style.display='grid';tr.classList.remove('in');void tr.offsetWidth;tr.classList.add('in');
+  toast.textContent='GET /'+NOMES[n];toast.style.display='block';
+  await sleep(950);swap();
+  toast.textContent='200 OK ✓';toast.style.color='#d9822b';toast.style.borderColor='#d9822b';
+  await sleep(450);toast.style.display='none';toast.style.color='';toast.style.borderColor='';
+  tr.classList.remove('in');await sleep(950);tr.style.display='none';
+}
+async function go(n){
+  if(busy||n<0||n>=S.length||n===cur)return;
+  busy=true;tok++;mark(n);
+  const swap=()=>{S[cur].classList.remove('on','enter');S[n].classList.add('on')};
+  if(reduce)swap();else await trans(n,swap);
+  cur=n;enter(n);busy=false;
+}
+document.getElementById('next').onclick=()=>go(cur+1);
+document.getElementById('prev').onclick=()=>go(cur-1);
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1)}
+  if(['ArrowLeft','PageUp'].includes(e.key))go(cur-1);
+});
+let sx=null;
+addEventListener('touchstart',e=>sx=e.touches[0].clientX);
+addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>50)go(cur+(d<0?1:-1));sx=null});
+mark(0);document.fonts.ready.then(()=>enter(0));
+</script>
+</body>
+</html>
